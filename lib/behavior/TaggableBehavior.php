@@ -20,12 +20,6 @@ class TaggableBehavior extends Behavior {
         $queryBuilderModifier,
         $peerBuilderModifier;
 
-
-    public function modifyDatabase()
-    {
-        die('mod db');
-    }
-
     public function modifyTable()
     {
         $this->createTagTable();
@@ -46,9 +40,10 @@ class TaggableBehavior extends Behavior {
                 'name'      => $tagTableName,
                 'phpName'   => $tagTablePhpName,
                 'package'   => $table->getPackage(),
-                'schema'    => $table->getSchema(),
+                'schema'    => 'lib.model.om',
                 'namespace' => $table->getNamespace(),
             ));
+
             // every behavior adding a table should re-execute database behaviors
             // see bug 2188 http://www.propelorm.org/changeset/2188
             foreach ($database->getBehaviors() as $behavior) {
@@ -92,7 +87,6 @@ class TaggableBehavior extends Behavior {
                 'name'      => $taggingTableName,
                 'phpName'   => $this->replaceTokens($this->parameters['tagging_table_phpname']),
                 'package'   => $table->getPackage(),
-                'schema'    => $table->getSchema(),
                 'namespace' => $table->getNamespace(),
             ));
             // every behavior adding a table should re-execute database behaviors
@@ -128,20 +122,20 @@ class TaggableBehavior extends Behavior {
         $this->taggingTable->setIsCrossRef(true);
         
         $fkTag = new ForeignKey();
-        $fkTag->setForeignTableCommonName($this->tagTable->getName());
-        $fkTag->setForeignSchemaName($this->tagTable->getSchema());
-        $fkTag->setOnDelete(ForeignKey::CASCADE);
-        $fkTag->setOnUpdate(ForeignKey::NONE);
+        $fkTag->setName('fk_'.$table->getName().'_tag');
+        $fkTag->setForeignTableName($this->tagTable->getName());
+        $fkTag->setOnDelete('CASCADE');
+	$fkTag->setOnUpdate(null);
         foreach ($pks as $column) {
             $fkTag->addReference($tagFkColumn, $column->getName());
         }
         $this->taggingTable->addForeignKey($fkTag);
 
         $fkObj = new ForeignKey();
-        $fkObj->setForeignTableCommonName($this->getTable()->getName());
-        $fkObj->setForeignSchemaName($this->getTable()->getSchema());
-        $fkObj->setOnDelete(ForeignKey::CASCADE);
-        $fkObj->setOnUpdate(ForeignKey::NONE);
+        $fkObj->setName('fk_'.$table->getName().'_obj');
+        $fkObj->setForeignTableName($this->getTable()->getName());
+        $fkObj->setOnDelete('CASCADE');
+	$fkObj->setOnUpdate(null);
         foreach ($pks as $column) {
             $fkObj->addReference($objFkColumn, $column->getName());
         }
