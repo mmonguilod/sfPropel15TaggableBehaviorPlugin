@@ -40,7 +40,6 @@ class TaggableBehavior extends Behavior {
                 'name'      => $tagTableName,
                 'phpName'   => $tagTablePhpName,
                 'package'   => $table->getPackage(),
-                'schema'    => 'lib.model.om',
                 'namespace' => $table->getNamespace(),
             ));
 
@@ -125,7 +124,7 @@ class TaggableBehavior extends Behavior {
         $fkTag->setName('fk_'.$table->getName().'_tag');
         $fkTag->setForeignTableName($this->tagTable->getName());
         $fkTag->setOnDelete('CASCADE');
-	$fkTag->setOnUpdate(null);
+        $fkTag->setOnUpdate(null);
         foreach ($pks as $column) {
             $fkTag->addReference($tagFkColumn, $column->getName());
         }
@@ -135,7 +134,7 @@ class TaggableBehavior extends Behavior {
         $fkObj->setName('fk_'.$table->getName().'_obj');
         $fkObj->setForeignTableName($this->getTable()->getName());
         $fkObj->setOnDelete('CASCADE');
-	$fkObj->setOnUpdate(null);
+        $fkObj->setOnUpdate(null);
         foreach ($pks as $column) {
             $fkObj->addReference($objFkColumn, $column->getName());
         }
