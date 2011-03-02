@@ -152,6 +152,7 @@ class TaggableBehavior extends Behavior {
 
         $this->addAddTagsMethod($script);
         $this->addRemoveTagMethod($script);
+        $this->addGetTagsMethos($script);
 
         return $script;
     }
@@ -185,6 +186,23 @@ public function addTags(\$tags) {
             \$this->addTag(\$theTag);
     }
 }      
+";
+    }
+
+    private function addGetTagsMethos(&$script)
+    {
+        $table = $this->getTable();
+        $script .= "
+
+/**
+ * Get tags
+ */
+public function getTags() {
+    return TagQuery::create()
+        ->use{$this->taggingTable->getPhpName()}Query()
+          ->filterByArticle(\$this)
+        ->endUse();
+}
 ";
     }
 
